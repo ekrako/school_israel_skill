@@ -16,7 +16,8 @@ export const MASHOV_READ_ROUTES = [
   ...STUDENT_SECTIONS.map((section) => route("GET", `/api/students/:id/${section}`)),
 ];
 
-const LOGIN_HINT = "Check MASHOV_USERNAME, MASHOV_PASSWORD, MASHOV_SEMEL and MASHOV_YEAR.";
+const LOGIN_HINT =
+  "Check MASHOV_USERNAME, MASHOV_PASSWORD, MASHOV_SEMEL and MASHOV_YEAR before trying again: repeated failed logins may lock the account.";
 
 export interface Page {
   readonly skip: number;

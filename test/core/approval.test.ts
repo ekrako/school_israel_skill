@@ -15,7 +15,7 @@ const REQUEST: WriteRequest = {
 };
 
 function fakeExec(code: number, stdout = ""): ReturnType<typeof vi.fn<Exec>> {
-  return vi.fn<Exec>(async () => ({ code, stdout }));
+  return vi.fn<Exec>(async () => ({ code, stdout, stderr: "" }));
 }
 
 describe("approval dialog", () => {
@@ -72,7 +72,7 @@ describe("approval dialog", () => {
       maxOpen = Math.max(maxOpen, ++open);
       await new Promise((resolve) => setTimeout(resolve, 5));
       open--;
-      return { code: 0, stdout: "Allow" };
+      return { code: 0, stdout: "Allow", stderr: "" };
     };
     const approve = dialogApprover("darwin", {}, exec);
     await Promise.all([approve(REQUEST), approve(REQUEST), approve(REQUEST)]);

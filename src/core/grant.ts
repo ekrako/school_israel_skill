@@ -1,8 +1,7 @@
 import { randomInt } from "node:crypto";
 import { mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { homedir } from "node:os";
 import { dirname, join } from "node:path";
-import type { Env } from "./config.ts";
+import { type Env, stateDir } from "./config.ts";
 import { AccessDenied, ConfigError, UsageError } from "./errors.ts";
 
 export const DEFAULT_GRANT_MINUTES = 15;
@@ -15,8 +14,7 @@ const NO_TERMINAL_HINT =
   "Only the user can grant this, by running `scripts/school grant` in their own terminal.";
 
 export function grantPath(env: Env): string {
-  const stateHome = env.XDG_STATE_HOME || join(homedir(), ".local", "state");
-  return join(stateHome, "israel-school", "grant.json");
+  return join(stateDir(env), "grant.json");
 }
 
 /**

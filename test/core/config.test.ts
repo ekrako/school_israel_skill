@@ -1,8 +1,8 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { resolveEnvFile } from "../../src/core/config.ts";
+import { assertPrivateEnvFile, resolveEnvFile } from "../../src/core/config.ts";
 import { ConfigError } from "../../src/core/errors.ts";
 
 let dir: string;
@@ -47,6 +47,22 @@ describe("env file lookup", () => {
     ).toBe(explicit);
     expect(() => resolveEnvFile({ SCHOOL_ENV_FILE: join(dir, "nope") }, skillRoot)).toThrow(
       ConfigError,
+    );
+  });
+});
+
+describe("env file permissions", () => {
+  it("accepts a file only its owner can read", () => {
+    writeFileSync(userFile, "", { mode: 0o600 });
+    expect(() => assertPrivateEnvFile(userFile)).not.toThrow();
+  });
+
+  it.each([0o644, 0o640, 0o604])("refuses mode %o and says how to fix it", (mode) => {
+    writeFileSync(userFile, "");
+    chmodSync(userFile, mode);
+    expect(() => assertPrivateEnvFile(userFile)).toThrow(ConfigError);
+    expect(() => assertPrivateEnvFile(userFile)).toThrow(
+      expect.objectContaining({ hint: `Run: chmod 600 '${userFile}'` }),
     );
   });
 });

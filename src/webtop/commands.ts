@@ -79,6 +79,7 @@ function perStudent<R extends object>(
 const weekIndex = (context: CommandContext) => signedIntOption(context.options, "week", 0);
 
 export const webtop: App = {
+  secrets: ["SMARTSCHOOL_WEB_TOKEN", "SMARTSCHOOL_BIO_LOGIN"],
   options: {
     week: { type: "string" },
     page: { type: "string" },

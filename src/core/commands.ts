@@ -30,6 +30,8 @@ export type AppCommands = Readonly<Record<string, Command>>;
 export interface App {
   readonly commands: AppCommands;
   readonly options?: OptionSpecs;
+  /** Variables holding passwords or tokens; when unset, they are read from the OS keychain. */
+  readonly secrets?: readonly string[];
 }
 
 export type Apps = Readonly<Record<string, App>>;

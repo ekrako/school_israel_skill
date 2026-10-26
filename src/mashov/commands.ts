@@ -47,6 +47,7 @@ function matchesQuery(school: unknown, query: string): boolean {
 }
 
 export const mashov: App = {
+  secrets: ["MASHOV_PASSWORD"],
   options: {
     skip: { type: "string" },
     take: { type: "string" },

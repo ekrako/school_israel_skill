@@ -186,7 +186,7 @@ describe("school mashov", () => {
     expect(json.error).toEqual({
       type: "auth",
       message: "POST /api/login was rejected (HTTP 401).",
-      hint: "Check MASHOV_USERNAME, MASHOV_PASSWORD, MASHOV_SEMEL and MASHOV_YEAR.",
+      hint: expect.stringContaining("may lock the account"),
     });
     expect(output).not.toMatch(/sentinel/);
   });

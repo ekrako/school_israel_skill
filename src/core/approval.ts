@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { type ExecFileOptions, execFile } from "node:child_process";
 import type { HttpMethod } from "./access.ts";
 import type { Env } from "./config.ts";
 
@@ -18,6 +18,7 @@ export const denyAll: Approver = async () => "unavailable";
 export interface ExecResult {
   readonly code: number;
   readonly stdout: string;
+  readonly stderr: string;
 }
 
 /** Runs a program without a shell. Rejects only when the program cannot start. */
@@ -88,14 +89,23 @@ export function withGrant(hasGrant: () => boolean, fallback: Approver): Approver
 }
 
 export const execFileNoShell: Exec = (file, args) =>
-  new Promise((resolve, reject) => {
-    execFile(
-      file,
-      [...args],
-      { timeout: (DIALOG_TIMEOUT_SECONDS + 10) * 1000 },
-      (error, stdout) => {
-        if (typeof error?.code === "string") reject(error);
-        else resolve({ code: error === null ? 0 : (error.code ?? -1), stdout: String(stdout) });
-      },
-    );
+  runFile(file, args, { timeout: (DIALOG_TIMEOUT_SECONDS + 10) * 1000 });
+
+/** Runs a program without a shell. Rejects only when the program cannot start. */
+export function runFile(
+  file: string,
+  args: readonly string[],
+  options: ExecFileOptions,
+): Promise<ExecResult> {
+  return new Promise((resolve, reject) => {
+    execFile(file, [...args], options, (error, stdout, stderr) => {
+      if (typeof error?.code === "string") reject(error);
+      else
+        resolve({
+          code: error === null ? 0 : (error.code ?? -1),
+          stdout: String(stdout),
+          stderr: String(stderr),
+        });
+    });
   });
+}
