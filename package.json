@@ -1,0 +1,28 @@
+{
+  "name": "school-israel-skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent skill for Mashov and SmartSchool Webtop, with read-only and full access levels",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "school": "./scripts/school"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm run test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@types/node": "26.6.5",
+    "msw": "3.0.3",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  }
+}
