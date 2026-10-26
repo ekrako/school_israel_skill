@@ -114,6 +114,57 @@ describe("school CLI", () => {
     });
     expect(json.data).toBe("approved");
   });
+
+  it("gives commands the app's secrets from the store, and nothing else", async () => {
+    const apps: Apps = {
+      demo: {
+        secrets: ["DEMO_TOKEN"],
+        commands: {
+          read: { summary: "reads", write: false, run: async ({ env }) => env },
+        },
+      },
+    };
+    const secrets = vi.fn(async (name: string) => `stored-${name}`);
+    const { json } = await runCli(["demo", "read"], { OTHER: "x" }, apps, { secrets });
+    expect(json.data).toEqual({ OTHER: "x", DEMO_TOKEN: "stored-DEMO_TOKEN" });
+    expect(secrets.mock.calls).toEqual([["DEMO_TOKEN"]]);
+  });
+});
+
+describe("school update", () => {
+  const notice = { current: "0.1.0", latest: "0.2.0", command: "scripts/school update" };
+  const checkUpdate = async () => notice;
+
+  it("adds the update notice to results and to errors", async () => {
+    expect((await runCli(["demo", "read"], {}, fakeApps(), { checkUpdate })).json.update).toEqual(
+      notice,
+    );
+    const failing = fakeApps(async () => Promise.reject(new ConfigError("X is not set.")));
+    const { json } = await runCli(["demo", "read"], {}, failing, { checkUpdate });
+    expect(json).toMatchObject({ ok: false, update: notice });
+  });
+
+  it("leaves the notice out when the check fails or finds nothing", async () => {
+    const broken = async () => Promise.reject(new Error("offline"));
+    expect(
+      (await runCli(["demo", "read"], {}, fakeApps(), { checkUpdate: broken })).json,
+    ).not.toHaveProperty("update");
+    expect((await runCli(["demo", "read"])).json).not.toHaveProperty("update");
+  });
+
+  it("runs the update without repeating the notice", async () => {
+    const update = vi.fn(async () => ({ from: "0.1.0", to: "0.2.0" }));
+    const { code, json } = await runCli(["update"], {}, fakeApps(), { checkUpdate, update });
+    expect(code).toBe(0);
+    expect(json.data).toEqual({ from: "0.1.0", to: "0.2.0" });
+    expect(json).not.toHaveProperty("update");
+  });
+
+  it("refuses when updating is not available", async () => {
+    const { code, json } = await runCli(["update"]);
+    expect(code).toBe(2);
+    expect(json.error.type).toBe("usage");
+  });
 });
 
 describe("school grant and revoke", () => {

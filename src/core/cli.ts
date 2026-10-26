@@ -9,7 +9,7 @@ import {
   intOption,
   type OptionSpecs,
 } from "./commands.ts";
-import { type Env, loadDotEnv } from "./config.ts";
+import { type Env, loadDotEnv, SKILL_ROOT } from "./config.ts";
 import { AccessDenied, ConfigError, UsageError } from "./errors.ts";
 import {
   activeGrant,
@@ -19,7 +19,16 @@ import {
   type Prompt,
   revoke,
 } from "./grant.ts";
+import { noSecretStore, osSecretStore, type SecretStore, withStoredSecrets } from "./keychain.ts";
 import { serialize, toErrorResult } from "./output.ts";
+import {
+  checkForUpdate,
+  npxRunner,
+  readVersion,
+  type UpdateNotice,
+  updateCheckPath,
+  updateSkill,
+} from "./update.ts";
 
 export interface CliDeps {
   readonly env: Env;
@@ -29,6 +38,12 @@ export interface CliDeps {
   readonly approve?: Approver;
   /** Asks the person at the terminal; absent when there is none, as for agents. */
   readonly prompt?: Prompt;
+  /** Supplies an app's secrets the environment leaves unset. Defaults to none. */
+  readonly secrets?: SecretStore;
+  /** Reports a newer version of the skill, if there is one. Defaults to never. */
+  readonly checkUpdate?: () => Promise<UpdateNotice | undefined>;
+  /** Updates the installed skill. Absent where updating is not possible. */
+  readonly update?: () => Promise<unknown>;
   readonly now?: () => Date;
 }
 
@@ -42,6 +57,7 @@ const USAGE_HINT = "Run `school help` to list apps and commands.";
 
 /** Runs one CLI invocation and returns its exit code. Output is a single JSON document. */
 export async function main(apps: Apps, argv: readonly string[], deps: CliDeps): Promise<number> {
+  const notice = (deps.checkUpdate?.() ?? Promise.resolve(undefined)).catch(() => undefined);
   try {
     const { values, positionals } = parseArgs({
       args: [...argv],
@@ -59,7 +75,18 @@ export async function main(apps: Apps, argv: readonly string[], deps: CliDeps): 
     if (app === undefined || app in SCHOOL_COMMANDS) {
       const name = app ?? "help";
       const data = await runSchoolCommand(name, apps, access, options, deps);
-      deps.write(serialize({ ok: true, app: "school", command: name, access, write: false, data }));
+      const update = name === "update" ? {} : updateField(await notice);
+      deps.write(
+        serialize({
+          ok: true,
+          app: "school",
+          command: name,
+          access,
+          write: false,
+          data,
+          ...update,
+        }),
+      );
       return 0;
     }
     const command = findCommand(apps, app, commandName);
@@ -67,24 +94,41 @@ export async function main(apps: Apps, argv: readonly string[], deps: CliDeps): 
       throw new AccessDenied(`${app} ${commandName} changes data in the school app.`);
     }
     const approve = deps.approve ?? denyAll;
+    const env = await withStoredSecrets(
+      deps.env,
+      apps[app]?.secrets ?? [],
+      deps.secrets ?? noSecretStore,
+    );
     const data = await command.run({
       access,
       approve,
-      env: deps.env,
+      env,
       fetch: deps.fetch,
       options,
       args,
     });
     deps.write(
-      serialize({ ok: true, app, command: commandName ?? "", access, write: command.write, data }),
+      serialize({
+        ok: true,
+        app,
+        command: commandName ?? "",
+        access,
+        write: command.write,
+        data,
+        ...updateField(await notice),
+      }),
     );
     return 0;
   } catch (error) {
-    return reportError(error, deps.write);
+    return reportError(error, deps.write, await notice);
   }
 }
 
-const SCHOOL_COMMANDS = { help: true, grant: true, revoke: true } as const;
+function updateField(notice: UpdateNotice | undefined): { update?: UpdateNotice } {
+  return notice === undefined ? {} : { update: notice };
+}
+
+const SCHOOL_COMMANDS = { help: true, grant: true, revoke: true, update: true } as const;
 
 async function runSchoolCommand(
   name: string,
@@ -94,6 +138,10 @@ async function runSchoolCommand(
   deps: CliDeps,
 ): Promise<unknown> {
   if (name === "help") return describeApps(apps);
+  if (name === "update") {
+    if (deps.update === undefined) throw new UsageError("Updating is not available here.");
+    return deps.update();
+  }
   const path = grantPath(deps.env);
   if (name === "revoke") return revoke(path);
   if (access !== "full") {
@@ -107,11 +155,15 @@ function optionSpecs(apps: Apps): ParseArgsOptionsConfig {
   return Object.assign({}, GLOBAL_OPTIONS, ...Object.values(apps).map((app) => app.options ?? {}));
 }
 
-export function reportError(error: unknown, write: (text: string) => void): number {
+export function reportError(
+  error: unknown,
+  write: (text: string) => void,
+  notice?: UpdateNotice,
+): number {
   const { envelope, exitCode } = toErrorResult(
     isArgParseError(error) ? new UsageError(error.message, USAGE_HINT) : error,
   );
-  write(serialize(envelope));
+  write(serialize({ ...envelope, ...updateField(notice) }));
   return exitCode;
 }
 
@@ -161,7 +213,26 @@ export async function runFromProcess(apps: Apps): Promise<number> {
     dialogApprover(process.platform, env, execFileNoShell),
   );
   const prompt = process.stdin.isTTY && process.stderr.isTTY ? terminalPrompt : undefined;
-  return main(apps, process.argv.slice(2), { env, fetch, write, approve, prompt });
+  const secrets = osSecretStore(process.platform, execFileNoShell);
+  const checkUpdate = () =>
+    checkForUpdate({
+      env,
+      fetch,
+      now: new Date(),
+      current: readVersion(SKILL_ROOT),
+      cachePath: updateCheckPath(env),
+    });
+  const update = () => updateSkill(SKILL_ROOT, npxRunner(env));
+  return main(apps, process.argv.slice(2), {
+    env,
+    fetch,
+    write,
+    approve,
+    prompt,
+    secrets,
+    checkUpdate,
+    update,
+  });
 }
 
 async function terminalPrompt(question: string): Promise<string> {

@@ -1,5 +1,6 @@
 import type { AccessLevel } from "./access.ts";
 import { type ErrorType, EXIT_CODES, SchoolError } from "./errors.ts";
+import type { UpdateNotice } from "./update.ts";
 
 export interface SuccessEnvelope {
   readonly ok: true;
@@ -8,11 +9,14 @@ export interface SuccessEnvelope {
   readonly access: AccessLevel;
   readonly write: boolean;
   readonly data: unknown;
+  /** Present when a newer version of the skill is out. */
+  readonly update?: UpdateNotice;
 }
 
 export interface ErrorEnvelope {
   readonly ok: false;
   readonly error: { readonly type: ErrorType; readonly message: string; readonly hint?: string };
+  readonly update?: UpdateNotice;
 }
 
 export interface ErrorResult {
