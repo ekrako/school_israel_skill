@@ -1,75 +1,92 @@
 ---
 name: israel-school
-description: קריאת נתוני בית הספר של התלמיד ממשו"ב (Mashov) ומסמארט סקול (SmartSchool Webtop) - ציונים, שיעורי בית, מערכת שעות, אירועי התנהגות ונוכחות, הודעות והתראות. השתמש כשהמשתמש שואל על ציונים, מבחנים, שיעורי בית, מערכת שעות, חיסורים, איחורים, הערות משמעת או הודעות מבית הספר, או מזכיר את משו"ב, Mashov, סמארט סקול, SmartSchool או Webtop.
+description: 'Reads a student''s school data from Israel''s two main school apps, Mashov (משו"ב) and SmartSchool Webtop (סמארט סקול): grades, homework, timetable, behavior and attendance events, messages and notifications. Read-only by default, returns JSON, keeps passwords in the OS keychain. Use when the user asks about grades, exams, homework, the timetable, absences, lateness, discipline notes or messages from school, or mentions Mashov, משו"ב, SmartSchool, סמארט סקול or Webtop. Do NOT use for other school systems or for general questions about the Israeli education system.'
+license: MIT
+compatibility: Requires Node.js 24 or later and a shell. macOS or Linux for keychain secrets and approval dialogs.
+metadata:
+  author: ekrako
+  display_name:
+    he: 'בית ספר בישראל: משו"ב וסמארט סקול'
+    en: 'Israeli School: Mashov and SmartSchool Webtop'
+  display_description:
+    he: 'קריאת נתוני בית הספר ממשו"ב ומסמארט סקול: ציונים, שיעורי בית, מערכת שעות, חיסורים, איחורים והערות משמעת, הודעות והתראות. מיועד להורים ולתלמידים ששואלים את הסוכן "מה יש מחר?" או "איך הציונים במתמטיקה?". ברירת המחדל היא קריאה בלבד, והסיסמאות נשמרות במחזיק המפתחות של מערכת ההפעלה.'
+    en: 'Reads school data from Mashov and SmartSchool Webtop: grades, homework, timetable, absences, lateness and discipline notes, messages and notifications. For parents and students who ask their agent "what is due tomorrow?" or "how are the math grades?". Read-only by default, with passwords kept in the OS keychain.'
+  tags:
+    he: [משוב, סמארט-סקול, וובטופ, ציונים, שיעורי-בית, מערכת-שעות, הורים, ישראל]
+    en: [mashov, smartschool, webtop, grades, homework, timetable, parents, israel]
 ---
 
-# בית ספר בישראל: משו"ב וסמארט סקול
+# Israeli School: Mashov and SmartSchool Webtop
 
-הסקיל מריץ את `scripts/school` מתוך תיקיית הסקיל. כל הרצה מדפיסה מסמך JSON יחיד ל-stdout.
-נדרש Node 24 ומעלה.
+The skill runs `scripts/school` from the skill folder. Every run prints a single JSON document to
+stdout. Requires Node 24 or later.
 
 ```sh
-scripts/school help                      # רשימת האפליקציות והפקודות
+scripts/school help                      # list the apps and commands
 scripts/school mashov <command> [options]
 scripts/school webtop <command> [options]
-scripts/school update                    # עדכון הסקיל לגרסה האחרונה
+scripts/school update                    # update the skill to the latest version
 ```
 
-אם לא ברור באיזו אפליקציה בית הספר משתמש, שאל את המשתמש.
+If it is not clear which app the school uses, ask the user.
 
-## עדכונים
+## Updates
 
-פעם ביום הסקיל בודק ב-GitHub אם יצאה גרסה חדשה. כשיש, הפלט (גם של שגיאה) כולל את השדה
+Once a day the skill checks GitHub for a newer version. When there is one, the output (errors
+included) carries the field
 `"update": { "current": "0.1.0", "latest": "0.2.0", "command": "scripts/school update" }`.
 
-- ענה קודם על השאלה של המשתמש. אחר כך ספר לו שיש גרסה חדשה ושאל אם לעדכן. שאל פעם אחת בשיחה.
-- הרץ `scripts/school update` רק אחרי שהמשתמש הסכים במפורש. אם סירב, אל תשאל שוב באותה שיחה.
-- העדכון מחליף את תיקיית הסקיל. אחרי העדכון קרא שוב את `SKILL.md`, כי ההוראות עשויות להשתנות.
-- אם `update` נכשל, העבר למשתמש את ה-`message` ואת ה-`hint` ואל תנסה שוב.
+- Answer the user's question first. Then tell them a new version exists and ask whether to update.
+  Ask once per conversation.
+- Run `scripts/school update` only after the user explicitly agrees. If they decline, do not ask
+  again in the same conversation.
+- The update replaces the skill folder. After it, read `SKILL.md` again, since the instructions may
+  have changed.
+- If `update` fails, pass the `message` and the `hint` to the user and do not retry.
 
-## פקודות משו"ב (`mashov`)
+## Mashov commands (`mashov`)
 
-| פקודה | מה היא מחזירה | אפשרויות |
+| Command | Returns | Options |
 |---|---|---|
-| `students` | התלמידים בחשבון: מספר סידורי, מזהה, שם, כיתה | |
-| `grades` | ציונים | `--student` |
-| `homework` | שיעורי בית | `--student` |
-| `timetable` | מערכת שעות שבועית | `--student` |
-| `behavior` | אירועי התנהגות ונוכחות: חיסורים, איחורים, הערות | `--student` |
-| `messages` | שיחות בתיבת הדואר הנכנס, מהחדשה לישנה | `--skip`, `--take` (ברירת מחדל 20) |
-| `schools` | רשימת בתי הספר הציבורית, לאיתור סמל מוסד. לא דורשת התחברות | `--query` |
-| `all` | כל הנתונים של כל תלמיד ותיבת הדואר, בהתחברות אחת | `--student`, `--skip`, `--take` |
+| `students` | Students on the account: index, id, name, class | |
+| `grades` | Grades | `--student` |
+| `homework` | Homework | `--student` |
+| `timetable` | Weekly timetable | `--student` |
+| `behavior` | Behavior and attendance events: absences, lateness, notes | `--student` |
+| `messages` | Inbox conversations, newest first | `--skip`, `--take` (default 20) |
+| `schools` | The public school list, to look up a school code (semel). No login needed | `--query` |
+| `all` | All data for every student plus the inbox, in one login | `--student`, `--skip`, `--take` |
 
-## פקודות סמארט סקול (`webtop`)
+## SmartSchool commands (`webtop`)
 
-| פקודה | מה היא מחזירה | אפשרויות |
+| Command | Returns | Options |
 |---|---|---|
-| `check` | האם החיבור עדיין בתוקף | |
-| `students` | התלמידים בחשבון: מספר סידורי, מזהה, שם, כיתה, שנת לימודים | |
-| `grades` | ציונים | `--student` |
-| `homework` | שיעורי הבית של שבוע, כרשימה מסודרת (תאריך, מקצוע, מורה, משימה) | `--student`, `--week` |
-| `timetable` | השיעורים של שבוע, כולל שיעורי בית, כפי שהשרת מחזיר | `--student`, `--week` |
-| `today` | השיעורים ושיעורי הבית של היום, מלוח הבקרה | `--student` |
-| `behavior` | אירועי משמעת ונוכחות | `--student` |
-| `messages` | רשימת ההודעות בתיבת הדואר (נושא, שולח, תאריך, נקרא/לא נקרא) | `--page` (מ-1), `--unread`, `--query` |
-| `notifications` | תצוגה מקדימה של התראות שלא נקראו | |
-| `all` | ציונים, שבוע, שיעורי בית ומשמעת לכל תלמיד, ועוד הודעות והתראות | `--student`, `--week`, `--page`, `--unread` |
+| `check` | Whether the session is still valid | |
+| `students` | Students on the account: index, id, name, class, school year | |
+| `grades` | Grades | `--student` |
+| `homework` | A week's homework as a clean list (date, subject, teacher, task) | `--student`, `--week` |
+| `timetable` | A week's lessons, homework included, as the server returns them | `--student`, `--week` |
+| `today` | Today's lessons and homework, from the dashboard | `--student` |
+| `behavior` | Discipline and attendance events | `--student` |
+| `messages` | Inbox message list (subject, sender, date, read/unread) | `--page` (from 1), `--unread`, `--query` |
+| `notifications` | Preview of unread notifications | |
+| `all` | Grades, week, homework and discipline per student, plus messages and notifications | `--student`, `--week`, `--page`, `--unread` |
 
-- `--week=0` הוא השבוע הנוכחי, `--week=-1` השבוע הקודם, `--week=1` הבא. ערך שלילי חייב
-  להיכתב עם `=`.
-- `messages` מחזירה רק את רשימת ההודעות. פתיחת תוכן הודעה עלולה לסמן אותה כנקראה, ולכן
-  אינה חלק מקריאה בלבד.
+- `--week=0` is the current week, `--week=-1` the previous one, `--week=1` the next. A negative
+  value must be written with `=`.
+- `messages` returns only the message list. Opening a message body may mark it as read, so it is
+  not part of read-only access.
 
-## אפשרויות משותפות
+## Shared options
 
-- `--student` מקבל מזהה, שם מלא מדויק או מספר סידורי (מ-1) כפי שמופיע ב-`students`.
-  בלי `--student` הפקודה רצה על כל התלמידים בחשבון. בסמארט סקול המזהה ארוך ומוצפן, ולכן
-  עדיף המספר הסידורי.
-- כשצריך יותר מסוג נתונים אחד, העדף `all`: פחות קריאות לשרת.
+- `--student` takes an id, an exact full name, or an index (from 1) as listed by `students`.
+  Without `--student` the command runs for every student on the account. In SmartSchool the id is
+  long and encrypted, so prefer the index.
+- When you need more than one kind of data, prefer `all`: fewer calls to the server.
 
-## פלט
+## Output
 
-הצלחה, קוד יציאה 0:
+Success, exit code 0:
 
 ```json
 {
@@ -82,124 +99,133 @@ scripts/school update                    # עדכון הסקיל לגרסה הא
 }
 ```
 
-רוב הנתונים מגיעים כפי שהשרת מחזיר אותם, בלי עיבוד. קרא את השדות בפועל לפני שאתה מסכם,
-ואל תניח מבנה קבוע. החריגים: `homework` ו-`today` ו-`messages` בסמארט סקול מחזירים
-רשימות מסודרות, וערכים כמו "אין" או "ללא שיעורי בית" מסוננים מהן.
+Most data arrives as the server returns it, unprocessed. Read the actual fields before you
+summarize, and do not assume a fixed shape. The exceptions: SmartSchool `homework`, `today` and
+`messages` return clean lists, with values such as "אין" or "ללא שיעורי בית" filtered out.
 
-כישלון, קוד יציאה שונה מ-0:
+Failure, non-zero exit code:
 
 ```json
 { "ok": false, "error": { "type": "config", "message": "...", "hint": "..." } }
 ```
 
-| `type` | קוד | מה לעשות |
+| `type` | Code | What to do |
 |---|---|---|
-| `usage` | 2 | תקן את הפקודה. `scripts/school help` מציג את הפקודות. |
-| `config` | 2 | חסר משתנה סביבה או שערכו שגוי. אמור למשתמש איזה, לפי ה-`hint`. אל תנחש ערכים. |
-| `auth` | 3 | ההתחברות נדחתה או שפג תוקף החיבור. העבר למשתמש את ה-`hint`. אל תנסה שוב אוטומטית: ניסיונות כושלים חוזרים עלולים לנעול את החשבון. |
-| `upstream` | 4 | השרת נכשל, לא ענה או החזיר שגיאה. מותר לנסות שוב פעם אחת. |
-| `access_denied` | 5 | הפעולה דורשת `full` או `unattended`, או שהמשתמש לא אישר אותה. אל תנסה שוב. ראה "רמות הרשאה". |
-| `internal` | 1 | תקלה בסקיל. דווח למשתמש והצע לדווח עליה (ראה "דיווח על בעיות"). |
+| `usage` | 2 | Fix the command. `scripts/school help` lists the commands. |
+| `config` | 2 | An environment variable is missing or wrong. Tell the user which one, per the `hint`. Do not guess values. |
+| `auth` | 3 | Login was rejected or the session expired. Pass the `hint` to the user. Do not retry automatically: repeated failed logins can lock the account. |
+| `upstream` | 4 | The server failed, timed out or returned an error. You may retry once. |
+| `access_denied` | 5 | The action needs `full` or `unattended`, or the user did not approve it. Do not retry. See "Access levels". |
+| `internal` | 1 | A bug in the skill. Tell the user and offer to report it (see "Reporting problems"). |
 
-## רמות הרשאה
+## Access levels
 
-`SCHOOL_ACCESS` בסביבה קובע את התקרה:
+`SCHOOL_ACCESS` in the environment sets the ceiling:
 
-- `read` (ברירת המחדל): קריאה בלבד. כל שינוי נחסם, בלי לשאול.
-- `full`: מותרות גם קריאות שמשנות נתונים, אבל כל אחת מהן צריכה אישור מהמשתמש.
-- `unattended`: מותרות קריאות שמשנות נתונים בלי לשאול, להרצות שאין לידן אדם (למשל משימה מתוזמנת).
+- `read` (default): read only. Every change is blocked, without asking.
+- `full`: calls that change data are allowed too, but each one needs the user's approval.
+- `unattended`: calls that change data are allowed without asking, for runs with nobody at the
+  computer (for example a scheduled task).
 
-איך המשתמש מאשר שינוי ב-`full`:
+How the user approves a change under `full`:
 
-- **חלון אישור לכל קריאה:** לפני שקריאה שמשנה נתונים יוצאת לשרת, נפתח חלון במחשב של המשתמש
-  (macOS, או Linux עם `zenity`). החלון מציג את הכתובת ואת הנתונים שיישלחו, עם הכפתורים Allow ו-Deny.
-  אם לא עונים תוך 2 דקות, זה נחשב סירוב.
-- **אישור לזמן מוגבל:** המשתמש מריץ בעצמו בטרמינל `scripts/school grant --minutes 15` (ברירת מחדל 15,
-  עד 120) ומקליד את הקוד שמוצג. עד שהזמן נגמר, שינויים יוצאים בלי חלון. `scripts/school revoke`
-  מבטל את האישור מיד.
+- **A dialog per call:** before a call that changes data leaves for the server, a dialog opens on
+  the user's computer (macOS, or Linux with `zenity`). It shows the URL and the data to be sent,
+  with Allow and Deny buttons. No answer within 2 minutes counts as Deny.
+- **Time-limited approval:** the user runs `scripts/school grant --minutes 15` in a terminal
+  themselves (default 15, up to 120) and types the code shown. Until the time runs out, changes go
+  out without a dialog. `scripts/school revoke` cancels the approval at once.
 
-כללים:
+Rules:
 
-- לעולם אל תשנה את `SCHOOL_ACCESS` ואל תערוך את קובץ ה-`.env`. רק המשתמש מחליט על רמת ההרשאה.
-- לעולם אל תריץ `grant`, אל תיצור או תערוך את קובץ האישור, ואל תנסה ללחוץ על חלון האישור או
-  לעקוף אותו. מותר להריץ `revoke`.
-- לפני כל פקודה שמסומנת `"write": true` ב-`scripts/school help`, ולפני כל קריאה שמשנה נתונים,
-  תאר למשתמש בדיוק מה ישתנה ומול מי, וקבל אישור מפורש בשיחה. אישור לפעולה אחת לא חל על הבאה.
-  החלון הוא אישור נוסף, לא תחליף.
-- ב-`unattended` אין חלון ואין קוד. בצע רק שינויים שהמשתמש ביקש מראש במפורש, בדיוק כפי שביקש
-  (למשל "סמן כל הודעה חדשה כנקראה"). כל שינוי אחר מחכה לשאלה בשיחה.
-- כשמתקבל `access_denied` כי המשתמש סירב, אל תנסה שוב. שאל את המשתמש מה לעשות.
-- כשאין חלון זמין (למשל בשרת מרוחק), העבר למשתמש את ה-`hint`: הוא יכול להריץ `grant` בעצמו.
-- `--read-only` מגביל הרצה בודדת לקריאה בלבד, גם כשההרשאה היא `full`.
+- Never change `SCHOOL_ACCESS` and never edit the `.env` file. Only the user decides the access
+  level.
+- Never run `grant`, never create or edit the approval file, and never try to click or bypass the
+  approval dialog. Running `revoke` is allowed.
+- Before any command marked `"write": true` in `scripts/school help`, and before any call that
+  changes data, describe to the user exactly what will change and where, and get explicit approval
+  in the conversation. Approval for one action does not carry to the next. The dialog is an extra
+  approval, not a replacement.
+- Under `unattended` there is no dialog and no code. Make only changes the user explicitly asked
+  for in advance, exactly as asked (for example "mark every new message as read"). Any other change
+  waits for a question in the conversation.
+- When `access_denied` comes back because the user declined, do not retry. Ask the user what to do.
+- When no dialog is available (for example on a remote server), pass the `hint` to the user: they
+  can run `grant` themselves.
+- `--read-only` limits a single run to reading, even when the access level is `full`.
 
-## הגדרה
+## Setup
 
-פרטי ההתחברות נקראים ממשתני סביבה בלבד. הסקיל טוען את הקובץ הראשון שקיים מבין:
-`SCHOOL_ENV_FILE`, `~/.config/israel-school/.env`, ו-`.env` בתיקיית הסקיל. `.env.example` מפרט את
-השמות. צריך להגדיר רק את האפליקציה שבית הספר משתמש בה.
+Login details are read from environment variables only. The skill loads the first file that
+exists among: `SCHOOL_ENV_FILE`, `~/.config/israel-school/.env`, and `.env` in the skill folder.
+`.env.example` lists the names. Only the app the school uses needs to be configured.
 
-אל תבקש מהמשתמש להדביק סיסמה או טוקן בשיחה. הוא מוסיף אותם בעצמו לקובץ ה-`.env`, או למחזיק
-המפתחות של המחשב (השירות `israel-school`, החשבון בשם המשתנה). `MASHOV_PASSWORD`,
-`SMARTSCHOOL_WEB_TOKEN` ו-`SMARTSCHOOL_BIO_LOGIN` נקראים משם כשהם חסרים בקובץ. הפקודות מופיעות
-ב-README.
+Never ask the user to paste a password or token into the conversation. They add it themselves to
+the `.env` file, or to the computer's keychain (service `israel-school`, account named after the
+variable). `MASHOV_PASSWORD`, `SMARTSCHOOL_WEB_TOKEN` and `SMARTSCHOOL_BIO_LOGIN` are read from
+there when the file does not set them. The commands are in the README.
 
-הסקיל מסרב לקובץ `.env` שמשתמשים אחרים יכולים לקרוא. העבר למשתמש את פקודת ה-`chmod` מה-`hint`.
+The skill refuses a `.env` file that other users can read. Pass the user the `chmod` command from
+the `hint`.
 
-ערכים עם `#` (נפוץ בסיסמאות) חייבים להיות במירכאות בודדות, למשל `MASHOV_PASSWORD='abc#123'`.
-בלי מירכאות, כל מה שאחרי ה-`#` נחתך וההתחברות נכשלת.
+Values containing `#` (common in passwords) must be in single quotes, for example
+`MASHOV_PASSWORD='abc#123'`. Unquoted, everything after the `#` is cut off and login fails.
 
-### משו"ב
+### Mashov
 
-| משתנה | חובה | תיאור |
+| Variable | Required | Description |
 |---|---|---|
-| `MASHOV_USERNAME` | כן | שם המשתמש במשו"ב |
-| `MASHOV_PASSWORD` | כן | הסיסמה במשו"ב |
-| `MASHOV_SEMEL` | כן | סמל המוסד. אפשר למצוא עם `scripts/school mashov schools --query <שם בית הספר>` |
-| `MASHOV_YEAR` | לא | שנת הלימודים לפי השנה שבה היא מסתיימת (תשפ"ז = 2027). ברירת המחדל מחושבת מהתאריך, עם מעבר בספטמבר |
-| `MASHOV_STUDENT_ID` | לא | מזהה תלמיד, למקרה שלא נמצא תלמיד בתשובת ההתחברות |
+| `MASHOV_USERNAME` | Yes | Mashov username |
+| `MASHOV_PASSWORD` | Yes | Mashov password |
+| `MASHOV_SEMEL` | Yes | School code. Look it up with `scripts/school mashov schools --query <school name>` |
+| `MASHOV_YEAR` | No | School year, by the year it ends (תשפ"ז = 2027). Defaults to one computed from the date, rolling over in September |
+| `MASHOV_STUDENT_ID` | No | Student id, for when the login response lists no student |
 
-### סמארט סקול
+### SmartSchool
 
-ההתחברות בסיסמה חסומה ב-reCAPTCHA, ולכן הסקיל משתמש בעוגיית `webToken` מהדפדפן.
+Password login is gated by reCAPTCHA, so the skill uses the browser's `webToken` cookie.
 
-| משתנה | חובה | תיאור |
+| Variable | Required | Description |
 |---|---|---|
-| `SMARTSCHOOL_WEB_TOKEN` | כן, אלא אם הוגדר `SMARTSCHOOL_BIO_LOGIN` | ערך העוגייה `webToken` |
-| `SMARTSCHOOL_BIO_LOGIN` | לא | כניסה שמורה של הדפדפן, לחידוש אוטומטי של החיבור |
-| `SMARTSCHOOL_UNIQUE_ID`, `SMARTSCHOOL_SELECTED_USER`, `SMARTSCHOOL_DEVICE_ID` | לא | נלווים ל-`SMARTSCHOOL_BIO_LOGIN` |
+| `SMARTSCHOOL_WEB_TOKEN` | Yes, unless `SMARTSCHOOL_BIO_LOGIN` is set | The `webToken` cookie value |
+| `SMARTSCHOOL_BIO_LOGIN` | No | The browser's saved login, to renew the session automatically |
+| `SMARTSCHOOL_UNIQUE_ID`, `SMARTSCHOOL_SELECTED_USER`, `SMARTSCHOOL_DEVICE_ID` | No | Go with `SMARTSCHOOL_BIO_LOGIN` |
 
-כך המשתמש משיג טוקן:
+How the user gets a token:
 
-1. נכנס ל-https://webtop.smartschool.co.il (ואם הוא מחובר, מתנתק קודם).
-2. כדי שהטוקן יחזיק כחצי שנה ולא 9 שעות: בקונסולה של כלי המפתחים מריץ
-   `document.cookie = "saveRememberMe=1; path=/; domain=.smartschool.co.il"`, ומיד אחר כך מתחבר.
-3. בכלי המפתחים: Application ← Cookies ← מעתיק את הערך של `webToken` ל-`SMARTSCHOOL_WEB_TOKEN`.
+1. Open https://webtop.smartschool.co.il (log out first if logged in).
+2. To make the token last about half a year instead of 9 hours: in the developer tools console run
+   `document.cookie = "saveRememberMe=1; path=/; domain=.smartschool.co.il"`, then log in right
+   away.
+3. In the developer tools: Application → Cookies → copy the `webToken` value into
+   `SMARTSCHOOL_WEB_TOKEN`.
 
-כשמוגדר `SMARTSCHOOL_BIO_LOGIN` והטוקן פג, הסקיל מבקש חיבור חדש פעם אחת בכל הרצה. החיבור
-החדש עלול לנתק את המשתמש מהדפדפן. החידוש הוא בחירה של המשתמש: אל תציע להגדיר אותו בלי
-להסביר זאת.
+When `SMARTSCHOOL_BIO_LOGIN` is set and the token expires, the skill asks for a new session once
+per run. The new session may log the user out of the browser. Renewal is the user's choice: do not
+suggest setting it up without explaining this.
 
-## דיווח על בעיות
+## Reporting problems
 
-כשהסקיל לא עובד כמו שצריך, הצע למשתמש לדווח על כך. למשל: שגיאת `internal`, פקודה שנכשלת
-שוב ושוב עם `upstream` בזמן שהאתר עצמו עובד, פלט שלא תואם את מה שהמשתמש רואה באתר, או
-הוראה בקובץ הזה שהתבררה כשגויה. הצע פעם אחת לכל בעיה.
+When the skill does not work as it should, offer the user to report it. For example: an `internal`
+error, a command that keeps failing with `upstream` while the site itself works, output that does
+not match what the user sees on the site, or an instruction in this file that turned out wrong.
+Offer once per problem.
 
-- הדיווח נפתח כ-issue ב-https://github.com/ekrako/school_israel_skill/issues/new.
-- אם המשתמש רוצה, נסח לו טיוטה: הפקודה, ה-`type` וה-`message` של השגיאה, הגרסה (`version`
-  ב-`package.json` של הסקיל), מערכת ההפעלה, ומה היה צפוי לעומת מה שקרה.
-- ה-issue ציבורי. אל תכלול בטיוטה סיסמאות, טוקנים, סמל מוסד, שמות, מזהים, ציונים או כל נתון
-  אחר מהפלט. אם צריך דוגמה, השתמש בערכים מומצאים.
-- אל תפתח את ה-issue בעצמך. הצג את הטיוטה, ופתח אותו רק אם המשתמש ביקש זאת במפורש אחרי
-  שראה אותה.
-- בעיית אבטחה מדווחים בפרטיות, לא ב-issue:
+- Reports are opened as issues at https://github.com/ekrako/school_israel_skill/issues/new.
+- If the user wants, draft it for them: the command, the error's `type` and `message`, the version
+  (`version` in the skill's `package.json`), the OS, and what was expected versus what happened.
+- The issue is public. Leave out passwords, tokens, the school code, names, ids, grades and any
+  other value from the output. If an example is needed, use made-up values.
+- Do not open the issue yourself. Show the draft, and open it only if the user explicitly asks
+  after seeing it.
+- Report security problems privately, not as an issue:
   https://github.com/ekrako/school_israel_skill/security/advisories/new
 
-## פרטיות
+## Privacy
 
-- הפלט כולל מידע אישי על קטינים: שמות, ציונים, התנהגות והודעות. השתמש בו רק כדי לענות
-  על שאלת המשתמש.
-- אל תשמור את הפלט בקבצים, אל תכניס אותו ל-commit ואל תשלח אותו לשירות חיצוני או בהודעה,
-  אלא אם המשתמש ביקש זאת במפורש.
-- אל תקרא ואל תדפיס את קובץ ה-`.env`, ואל תקרא סודות ממחזיק המפתחות בעצמך (`security`,
-  `secret-tool`).
+- The output contains personal data about minors: names, grades, behavior and messages. Use it only
+  to answer the user's question.
+- Do not save the output to files, commit it, or send it to an outside service or in a message,
+  unless the user explicitly asks.
+- Do not read or print the `.env` file, and do not read secrets from the keychain yourself
+  (`security`, `secret-tool`).

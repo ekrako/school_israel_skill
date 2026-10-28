@@ -5,7 +5,7 @@
 > **English:** an agent skill (Claude Code, Codex, Cursor and others) that reads a student's data from
 > Israel's school apps, Mashov and SmartSchool Webtop: grades, homework, timetable, attendance and
 > messages. Read-only by default. Install with `npx skills add ekrako/school_israel_skill`.
-> The rest of this page is in Hebrew; [SKILL.md](SKILL.md) holds the full command reference.
+> The rest of this page is in Hebrew; [SKILL.md](skills/israel-school/SKILL.md) holds the full command reference.
 
 סקיל לסוכני AI (כמו Claude Code ו-Codex) שקורא את נתוני בית הספר מהאפליקציות הנפוצות בישראל:
 **משו"ב (Mashov)** ו**סמארט סקול (SmartSchool Webtop)**. הסוכן יכול לענות על שאלות כמו
@@ -182,7 +182,7 @@ scripts/school webtop messages --unread      # הודעות שלא נקראו
 | `students`, `grades`, `homework`, `timetable`, `behavior`, `messages`, `schools`, `all` | `check`, `students`, `grades`, `homework`, `timetable`, `today`, `behavior`, `messages`, `notifications`, `all` |
 
 `--student` מקבל מזהה, שם מלא או מספר סידורי (מ-1). בלי `--student` הפקודה רצה על כל התלמידים בחשבון.
-הפירוט המלא נמצא ב-[SKILL.md](SKILL.md).
+הפירוט המלא נמצא ב-[SKILL_HE.md](skills/israel-school/SKILL_HE.md) (באנגלית: [SKILL.md](skills/israel-school/SKILL.md)).
 
 ## רמות הרשאה
 
@@ -221,14 +221,15 @@ scripts/school webtop messages --unread      # הודעות שלא נקראו
 ```sh
 npm ci
 npm run check      # tsc --noEmit, biome, vitest (כל קריאות ה-HTTP מדומות)
-scripts/school help
+skills/israel-school/scripts/school help
 ```
 
+הסקיל עצמו, כלומר מה שמותקן אצל המשתמשים, נמצא ב-`skills/israel-school`. הבדיקות וכלי הפיתוח נשארים בשורש.
 הקוד מחולק ל-`src/core` (משותף), `src/mashov` ו-`src/webtop`. Biome אוכף שהליבה לא מייבאת מהאפליקציות,
 ושהאפליקציות לא מייבאות זו מזו.
 
-בדיקת העדכונים משווה את `version` שב-`package.json` לזה שב-`main`. כדי שמשתמשים יקבלו הצעה
-לעדכן, מעלים את הגרסה בכל שינוי שמתמזג.
+בדיקת העדכונים משווה את `version` שב-`skills/israel-school/package.json` לזה שב-`main`. כדי שמשתמשים
+יקבלו הצעה לעדכן, מעלים את הגרסה בכל שינוי שמתמזג.
 
 ## הבהרה
 
