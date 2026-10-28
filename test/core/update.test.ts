@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { UpstreamError, UsageError } from "../../src/core/errors.ts";
+import { UpstreamError, UsageError } from "../../skills/israel-school/src/core/errors.ts";
 import {
   checkForUpdate,
   installerEnv,
@@ -10,7 +10,7 @@ import {
   type NpxRunner,
   type UpdateCheck,
   updateSkill,
-} from "../../src/core/update.ts";
+} from "../../skills/israel-school/src/core/update.ts";
 
 const NOW = new Date("2026-10-26T10:00:00Z");
 const hoursLater = (hours: number) => new Date(NOW.getTime() + hours * 3_600_000);
@@ -59,7 +59,7 @@ describe("update check", () => {
       command: "scripts/school update",
     });
     expect(String(fetch.mock.calls[0]?.[0])).toBe(
-      "https://raw.githubusercontent.com/ekrako/school_israel_skill/main/package.json",
+      "https://raw.githubusercontent.com/ekrako/school_israel_skill/main/skills/israel-school/package.json",
     );
   });
 

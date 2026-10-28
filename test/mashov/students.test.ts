@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { studentsFromLogin } from "../../src/mashov/students.ts";
+import { studentsFromLogin } from "../../skills/israel-school/src/mashov/students.ts";
 
 describe("studentsFromLogin", () => {
   it("reads a parent's children", () => {

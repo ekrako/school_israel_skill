@@ -1,8 +1,8 @@
 import { HttpResponse, http, type JsonBodyType } from "msw";
 import { describe, expect, it } from "vitest";
-import { APPS } from "../../src/cli.ts";
-import { main } from "../../src/core/cli.ts";
-import { WEBTOP_BASE_URL } from "../../src/webtop/client.ts";
+import { APPS } from "../../skills/israel-school/src/cli.ts";
+import { main } from "../../skills/israel-school/src/core/cli.ts";
+import { WEBTOP_BASE_URL } from "../../skills/israel-school/src/webtop/client.ts";
 import { captureRequests, server } from "../msw.ts";
 
 const API = `${WEBTOP_BASE_URL}/server/api`;

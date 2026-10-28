@@ -1,8 +1,8 @@
 import { HttpResponse, http, type JsonBodyType } from "msw";
 import { describe, expect, it } from "vitest";
-import { APPS } from "../../src/cli.ts";
-import { main } from "../../src/core/cli.ts";
-import { MASHOV_BASE_URL } from "../../src/mashov/client.ts";
+import { APPS } from "../../skills/israel-school/src/cli.ts";
+import { main } from "../../skills/israel-school/src/core/cli.ts";
+import { MASHOV_BASE_URL } from "../../skills/israel-school/src/mashov/client.ts";
 import { captureRequests, server } from "../msw.ts";
 
 const API = `${MASHOV_BASE_URL}/api`;

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { currentSchoolYear, readMashovConfig } from "../../src/mashov/config.ts";
+import {
+  currentSchoolYear,
+  readMashovConfig,
+} from "../../skills/israel-school/src/mashov/config.ts";
 
 const ENV = { MASHOV_USERNAME: "user", MASHOV_PASSWORD: "pass", MASHOV_SEMEL: "123456" };
 

@@ -2,9 +2,13 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
-import { type CliDeps, main } from "../../src/core/cli.ts";
-import type { Apps, Command, CommandContext } from "../../src/core/commands.ts";
-import { ConfigError } from "../../src/core/errors.ts";
+import { type CliDeps, main } from "../../skills/israel-school/src/core/cli.ts";
+import type {
+  Apps,
+  Command,
+  CommandContext,
+} from "../../skills/israel-school/src/core/commands.ts";
+import { ConfigError } from "../../skills/israel-school/src/core/errors.ts";
 
 function fakeApps(run: Command["run"] = async () => ({ value: 1 })): Apps {
   return {

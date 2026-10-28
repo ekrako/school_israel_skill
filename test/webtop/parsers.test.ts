@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { readWebtopConfig } from "../../src/webtop/config.ts";
-import { fromDashboard, fromPupilCard, isNoHomework } from "../../src/webtop/homework.ts";
-import { messagesFromInbox } from "../../src/webtop/messages.ts";
-import { studentsFromDashboard } from "../../src/webtop/students.ts";
+import { readWebtopConfig } from "../../skills/israel-school/src/webtop/config.ts";
+import {
+  fromDashboard,
+  fromPupilCard,
+  isNoHomework,
+} from "../../skills/israel-school/src/webtop/homework.ts";
+import { messagesFromInbox } from "../../skills/israel-school/src/webtop/messages.ts";
+import { studentsFromDashboard } from "../../skills/israel-school/src/webtop/students.ts";
 
 describe("Webtop config", () => {
   it("needs a webToken or a saved bio login", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { requireEnv } from "../../src/core/config.ts";
-import { ConfigError } from "../../src/core/errors.ts";
-import { toErrorResult } from "../../src/core/output.ts";
-import { redactPath } from "../../src/core/redact.ts";
+import { requireEnv } from "../../skills/israel-school/src/core/config.ts";
+import { ConfigError } from "../../skills/israel-school/src/core/errors.ts";
+import { toErrorResult } from "../../skills/israel-school/src/core/output.ts";
+import { redactPath } from "../../skills/israel-school/src/core/redact.ts";
 
 const SENTINEL = "SENTINEL-secret-value-0000";
 

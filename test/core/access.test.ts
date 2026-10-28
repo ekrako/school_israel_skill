@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { effectiveAccess, isReadRoute, parseAccessLevel, route } from "../../src/core/access.ts";
-import { ConfigError } from "../../src/core/errors.ts";
+import {
+  effectiveAccess,
+  isReadRoute,
+  parseAccessLevel,
+  route,
+} from "../../skills/israel-school/src/core/access.ts";
+import { ConfigError } from "../../skills/israel-school/src/core/errors.ts";
 
 describe("access level", () => {
   it("defaults to read when SCHOOL_ACCESS is unset or empty", () => {
