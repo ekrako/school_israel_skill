@@ -1,9 +1,14 @@
 import { delay, HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
-import { route } from "../../src/core/access.ts";
-import type { Approver } from "../../src/core/approval.ts";
-import { AccessDenied, AuthError, UpstreamError, UsageError } from "../../src/core/errors.ts";
-import { HttpClient, type HttpClientOptions } from "../../src/core/http.ts";
+import { route } from "../../skills/israel-school/src/core/access.ts";
+import type { Approver } from "../../skills/israel-school/src/core/approval.ts";
+import {
+  AccessDenied,
+  AuthError,
+  UpstreamError,
+  UsageError,
+} from "../../skills/israel-school/src/core/errors.ts";
+import { HttpClient, type HttpClientOptions } from "../../skills/israel-school/src/core/http.ts";
 import { captureRequests, server } from "../msw.ts";
 
 const BASE = "https://school.test";

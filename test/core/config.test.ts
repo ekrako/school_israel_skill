@@ -2,8 +2,11 @@ import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:f
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { assertPrivateEnvFile, resolveEnvFile } from "../../src/core/config.ts";
-import { ConfigError } from "../../src/core/errors.ts";
+import {
+  assertPrivateEnvFile,
+  resolveEnvFile,
+} from "../../skills/israel-school/src/core/config.ts";
+import { ConfigError } from "../../skills/israel-school/src/core/errors.ts";
 
 let dir: string;
 let skillRoot: string;

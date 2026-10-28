@@ -2,8 +2,13 @@ import { chmodSync, existsSync, mkdtempSync, rmSync, statSync, writeFileSync } f
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { AccessDenied, UsageError } from "../../src/core/errors.ts";
-import { activeGrant, grant, grantPath, revoke } from "../../src/core/grant.ts";
+import { AccessDenied, UsageError } from "../../skills/israel-school/src/core/errors.ts";
+import {
+  activeGrant,
+  grant,
+  grantPath,
+  revoke,
+} from "../../skills/israel-school/src/core/grant.ts";
 
 const NOW = new Date("2026-10-26T10:00:00Z");
 const minutesFromNow = (minutes: number) => new Date(NOW.getTime() + minutes * 60_000);

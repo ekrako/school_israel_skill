@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import type { Exec } from "../../src/core/approval.ts";
+import type { Exec } from "../../skills/israel-school/src/core/approval.ts";
 import {
   osSecretStore,
   parseMacPassword,
   type SecretStore,
   withStoredSecrets,
-} from "../../src/core/keychain.ts";
+} from "../../skills/israel-school/src/core/keychain.ts";
 
 function fakeExec(code: number, stdout: string, stderr = ""): ReturnType<typeof vi.fn<Exec>> {
   return vi.fn<Exec>(async () => ({ code, stdout, stderr }));

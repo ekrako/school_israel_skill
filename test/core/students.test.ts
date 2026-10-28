@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { selectStudents } from "../../src/core/students.ts";
+import { selectStudents } from "../../skills/israel-school/src/core/students.ts";
 
 const STUDENTS = [
   { id: "g-1", name: "Noa Levi" },

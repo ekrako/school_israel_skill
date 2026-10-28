@@ -5,7 +5,8 @@ import { type Env, stateDir } from "./config.ts";
 import { UpstreamError, UsageError } from "./errors.ts";
 
 export const SKILL_NAME = "israel-school";
-const LATEST_URL = "https://raw.githubusercontent.com/ekrako/school_israel_skill/main/package.json";
+const LATEST_URL =
+  "https://raw.githubusercontent.com/ekrako/school_israel_skill/main/skills/israel-school/package.json";
 const CHECK_INTERVAL_MS = 24 * 60 * 60_000;
 const CHECK_TIMEOUT_MS = 3_000;
 const UPDATE_TIMEOUT_MS = 5 * 60_000;

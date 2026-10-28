@@ -7,7 +7,7 @@
   "assist": { "enabled": true, "actions": { "source": { "organizeImports": "on" } } },
   "overrides": [
     {
-      "includes": ["src/core/**"],
+      "includes": ["skills/israel-school/src/core/**"],
       "linter": {
         "rules": {
           "style": {
@@ -27,7 +27,7 @@
       }
     },
     {
-      "includes": ["src/mashov/**"],
+      "includes": ["skills/israel-school/src/mashov/**"],
       "linter": {
         "rules": {
           "style": {
@@ -44,7 +44,7 @@
       }
     },
     {
-      "includes": ["src/webtop/**"],
+      "includes": ["skills/israel-school/src/webtop/**"],
       "linter": {
         "rules": {
           "style": {

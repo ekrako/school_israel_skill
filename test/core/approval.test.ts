@@ -6,7 +6,7 @@ import {
   type Exec,
   type WriteRequest,
   withGrant,
-} from "../../src/core/approval.ts";
+} from "../../skills/israel-school/src/core/approval.ts";
 
 const REQUEST: WriteRequest = {
   method: "POST",
