@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  release:
+    permissions:
+      id-token: write
+      contents: write
+      attestations: write
+    # skills-il/release-workflow v1.1.0
+    uses: skills-il/release-workflow/.github/workflows/release.yml@01c8746d31a64eb60728c44cf1a9fe836da0ec60
+    with:
+      subject_path: |
+        skills/israel-school/SKILL.md
+        skills/israel-school/SKILL_HE.md
+        skills/israel-school/package.json
+        skills/israel-school/scripts/**
+        skills/israel-school/src/**
