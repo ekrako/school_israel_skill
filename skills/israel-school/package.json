@@ -1,6 +1,6 @@
 {
   "name": "israel-school",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Agent skill for Mashov and SmartSchool Webtop, with read-only and full access levels",
   "license": "MIT",

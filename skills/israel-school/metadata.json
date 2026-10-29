@@ -1,0 +1,27 @@
+{
+  "display_name": {
+    "he": "בית ספר בישראל: משו\"ב וסמארט סקול",
+    "en": "Israeli School: Mashov and SmartSchool Webtop"
+  },
+  "display_description": {
+    "he": "קריאת נתוני בית הספר ממשו\"ב ומסמארט סקול: ציונים, שיעורי בית, מערכת שעות, חיסורים, איחורים והערות משמעת, הודעות והתראות. מיועד להורים ולתלמידים ששואלים את הסוכן \"מה יש מחר?\" או \"איך הציונים במתמטיקה?\". ברירת המחדל היא קריאה בלבד, והסיסמאות נשמרות במחזיק המפתחות של מערכת ההפעלה.",
+    "en": "Reads school data from Mashov and SmartSchool Webtop: grades, homework, timetable, absences, lateness and discipline notes, messages and notifications. For parents and students who ask their agent \"what is due tomorrow?\" or \"how are the math grades?\". Read-only by default, with passwords kept in the OS keychain."
+  },
+  "tags": {
+    "he": ["משוב", "סמארט-סקול", "וובטופ", "ציונים", "שיעורי-בית", "מערכת-שעות", "הורים", "ישראל"],
+    "en": [
+      "mashov",
+      "smartschool",
+      "webtop",
+      "grades",
+      "homework",
+      "timetable",
+      "parents",
+      "israel"
+    ]
+  },
+  "author": "ekrako",
+  "version": "0.2.0",
+  "category": "education",
+  "supported_agents": ["claude-code", "cursor", "opencode", "codex", "gemini-cli"]
+}

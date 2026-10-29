@@ -55,10 +55,10 @@ export interface UpdateCheck {
 /**
  * Compares this copy's version with the one on GitHub, at most once a day. The check is
  * best effort: any failure reads as "no update", so it can never fail a command.
- * `SCHOOL_UPDATE_CHECK=off` turns it off.
+ * Disabled by default; `SCHOOL_UPDATE_CHECK=on` enables it.
  */
 export async function checkForUpdate(check: UpdateCheck): Promise<UpdateNotice | undefined> {
-  if (check.env.SCHOOL_UPDATE_CHECK === "off") return undefined;
+  if (check.env.SCHOOL_UPDATE_CHECK !== "on") return undefined;
   const latest = await cachedLatest(check);
   return latest !== undefined && isNewer(latest, check.current)
     ? { current: check.current, latest, command: "scripts/school update" }
