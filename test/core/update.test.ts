@@ -28,7 +28,7 @@ function githubVersion(version: unknown) {
 
 function check(fetch: typeof globalThis.fetch, overrides: Partial<UpdateCheck> = {}): UpdateCheck {
   return {
-    env: {},
+    env: { SCHOOL_UPDATE_CHECK: "on" },
     fetch,
     now: NOW,
     current: "0.1.0",
@@ -89,13 +89,15 @@ describe("update check", () => {
     );
   });
 
-  it("never asks when SCHOOL_UPDATE_CHECK=off", async () => {
-    const fetch = githubVersion("0.2.0");
-    expect(
-      await checkForUpdate(check(fetch, { env: { SCHOOL_UPDATE_CHECK: "off" } })),
-    ).toBeUndefined();
-    expect(fetch).not.toHaveBeenCalled();
-  });
+  it.each([undefined, "", "off", "true"])(
+    "does not check GitHub when SCHOOL_UPDATE_CHECK is %s",
+    async (value) => {
+      const fetch = githubVersion("0.2.0");
+      const env = value === undefined ? {} : { SCHOOL_UPDATE_CHECK: value };
+      expect(await checkForUpdate(check(fetch, { env }))).toBeUndefined();
+      expect(fetch).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe("school update", () => {

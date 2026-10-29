@@ -16,6 +16,7 @@ jobs:
       subject_path: |
         skills/israel-school/SKILL.md
         skills/israel-school/SKILL_HE.md
+        skills/israel-school/metadata.json
         skills/israel-school/package.json
         skills/israel-school/scripts/**
         skills/israel-school/src/**

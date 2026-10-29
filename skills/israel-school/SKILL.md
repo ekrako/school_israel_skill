@@ -3,17 +3,6 @@ name: israel-school
 description: 'Reads a student''s school data from Israel''s two main school apps, Mashov (משו"ב) and SmartSchool Webtop (סמארט סקול): grades, homework, timetable, behavior and attendance events, messages and notifications. Read-only by default, returns JSON, keeps passwords in the OS keychain. Use when the user asks about grades, exams, homework, the timetable, absences, lateness, discipline notes or messages from school, or mentions Mashov, משו"ב, SmartSchool, סמארט סקול or Webtop. Do NOT use for other school systems or for general questions about the Israeli education system.'
 license: MIT
 compatibility: Requires Node.js 24 or later and a shell. macOS or Linux for keychain secrets and approval dialogs.
-metadata:
-  author: ekrako
-  display_name:
-    he: 'בית ספר בישראל: משו"ב וסמארט סקול'
-    en: 'Israeli School: Mashov and SmartSchool Webtop'
-  display_description:
-    he: 'קריאת נתוני בית הספר ממשו"ב ומסמארט סקול: ציונים, שיעורי בית, מערכת שעות, חיסורים, איחורים והערות משמעת, הודעות והתראות. מיועד להורים ולתלמידים ששואלים את הסוכן "מה יש מחר?" או "איך הציונים במתמטיקה?". ברירת המחדל היא קריאה בלבד, והסיסמאות נשמרות במחזיק המפתחות של מערכת ההפעלה.'
-    en: 'Reads school data from Mashov and SmartSchool Webtop: grades, homework, timetable, absences, lateness and discipline notes, messages and notifications. For parents and students who ask their agent "what is due tomorrow?" or "how are the math grades?". Read-only by default, with passwords kept in the OS keychain.'
-  tags:
-    he: [משוב, סמארט-סקול, וובטופ, ציונים, שיעורי-בית, מערכת-שעות, הורים, ישראל]
-    en: [mashov, smartschool, webtop, grades, homework, timetable, parents, israel]
 ---
 
 # Israeli School: Mashov and SmartSchool Webtop
@@ -25,24 +14,9 @@ stdout. Requires Node 24 or later.
 scripts/school help                      # list the apps and commands
 scripts/school mashov <command> [options]
 scripts/school webtop <command> [options]
-scripts/school update                    # update the skill to the latest version
 ```
 
 If it is not clear which app the school uses, ask the user.
-
-## Updates
-
-Once a day the skill checks GitHub for a newer version. When there is one, the output (errors
-included) carries the field
-`"update": { "current": "0.1.0", "latest": "0.2.0", "command": "scripts/school update" }`.
-
-- Answer the user's question first. Then tell them a new version exists and ask whether to update.
-  Ask once per conversation.
-- Run `scripts/school update` only after the user explicitly agrees. If they decline, do not ask
-  again in the same conversation.
-- The update replaces the skill folder. After it, read `SKILL.md` again, since the instructions may
-  have changed.
-- If `update` fails, pass the `message` and the `hint` to the user and do not retry.
 
 ## Mashov commands (`mashov`)
 
